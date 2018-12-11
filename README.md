@@ -13,3 +13,6 @@ Example:
 `python main.py -i Cats_and_dogs` will fetch 100 images of 'Cats and dogs'
 
 ___
+
+
+*Disclaimer : I didn't realise it was against TOS pls dont IP ban me, v sorry built before knowledge :(*
