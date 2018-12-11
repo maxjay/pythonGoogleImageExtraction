@@ -16,7 +16,7 @@ class Fetch():
     def __init__(self, terms, batch, output):
         self.terms = terms 
         self.batchSize = batch if batch != None else 100
-        self.outputLocation = output + '/' if output != None else ''
+        self.outputLocation = output if output != None else ''
 
     def run(self):
         for i in self.terms:
@@ -44,7 +44,11 @@ class Fetch():
             time.sleep(0.01)
     
     def runParentThread(self, term):
-        string = self.outputLocation+term
+        if self.outputLocation != '':
+            string = self.outputLocation + '/' + term
+        else:
+            string = self.outputLocation+term
+        print string
         if not os.path.isdir(string):
             os.makedirs(string)
         for i in range(self.batchSize//100):
@@ -57,7 +61,7 @@ class Fetch():
         print 'Starting batch', order
         url = 'https://www.google.com/search?tbm=isch&q='+term+'&ijn='+str(order)+'&start='+str(order)+'00&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
         print url
-        req = urllib2.Request(url, headers={'User-Agent' : 'Magic Browser'})
+        req = urllib2.Request(url, headers={'User-Agent' : 'Dab on them Haters Browser'})
         con = urllib2.urlopen(req)
         htmlFile = con.read()
         matches = re.findall(self.RE_IMG_SRC, htmlFile)
