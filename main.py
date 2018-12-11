@@ -36,8 +36,7 @@ class Fetch():
         print 'Starting batch', order
         url = self.IMAGE_SEARCH.format(term, order)
         req = Request(url, headers={'User-Agent' : 'Dab on them Haters Browser'})
-        con = urlopen(req)
-        htmlFile = con.read()
+        htmlFile = urlopen(req).read()
         matches = findall(self.RE_IMG_SRC, htmlFile)
         for k in range(order*100, order*100+len(matches)):
             if k%20 == 0:
