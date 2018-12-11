@@ -1,6 +1,3 @@
-# example input
-# extract.py -i one,two,three -b 2000 (optional) -o (optional)
-
 from argparse import ArgumentParser
 from urllib2 import Request, urlopen
 from re import findall
