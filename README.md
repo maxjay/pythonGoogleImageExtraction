@@ -8,6 +8,8 @@ Example:
 `python main.py -i dog cat -b 300` will fetch 300 images of 'dog' and 300 images of 'cat'
 
 **To include spaces in term, replace spaces with _ in the input**
-Example: `python main.py -i Cats_and_dogs` will fetch 100 images of 'Cats and dogs'
+
+Example: 
+`python main.py -i Cats_and_dogs` will fetch 100 images of 'Cats and dogs'
 
 ___
