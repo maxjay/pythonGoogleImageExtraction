@@ -8,7 +8,7 @@ from os import path, makedirs
 class Fetch():
     
     RE_IMG_SRC = r'img .*?src="(.*?)"'
-    IMAGE_SEARCH = 'https://www.google.com/search?tbm=isch&q=a&ijn=2&start=200&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
+    IMAGE_SEARCH = 'https://www.google.com/search?tbm=isch&q={0}&ijn={1}&start={1}00&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
 
     def __init__(self, terms, batch, output):
         self.terms = terms 
@@ -34,7 +34,7 @@ class Fetch():
 
     def runChildThread(self, term, order, output):
         print 'Starting batch', order
-        url = 'https://www.google.com/search?tbm=isch&q='+term+'&ijn='+str(order)+'&start='+str(order)+'00&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
+        url = self.IMAGE_SEARCH.format(term, order)
         req = Request(url, headers={'User-Agent' : 'Dab on them Haters Browser'})
         con = urlopen(req)
         htmlFile = con.read()
