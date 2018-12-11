@@ -17,10 +17,11 @@ class Fetch():
 
     def runMainThread(self):
         for j in self.terms:
-            t = Thread(target=self.runParentThread, args=(j,)).start()
+            Thread(target=self.runParentThread, args=(j,)).start()
             sleep(0.01)
     
     def runParentThread(self, term):
+        term = term.replace('_', ' ')
         if self.outputLocation != '':
             string = self.outputLocation + '/' + term
         else:
@@ -28,7 +29,7 @@ class Fetch():
         if not path.isdir(string):
             makedirs(string)
         for i in range(self.batchSize//100):
-            t = Thread(target=self.runChildThread, args=(term, i, string,)).start()
+            Thread(target=self.runChildThread, args=(term, i, string,)).start()
             sleep(0.01)
 
     def runChildThread(self, term, order, output):
