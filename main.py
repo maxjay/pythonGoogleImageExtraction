@@ -7,6 +7,7 @@ from re import findall
 from threading import Thread
 from time import sleep
 from os import path, makedirs
+
 class Fetch():
     
     RE_IMG_SRC = r'img .*?src="(.*?)"'
@@ -19,8 +20,7 @@ class Fetch():
 
     def runMainThread(self):
         for j in self.terms:
-            t = Thread(target=self.runParentThread, args=(j,))
-            t.start()
+            t = Thread(target=self.runParentThread, args=(j,)).start()
             sleep(0.01)
     
     def runParentThread(self, term):
@@ -28,19 +28,15 @@ class Fetch():
             string = self.outputLocation + '/' + term
         else:
             string = self.outputLocation+term
-        print string
         if not path.isdir(string):
             makedirs(string)
         for i in range(self.batchSize//100):
-            print i
-            t = Thread(target=self.runChildThread, args=(term, i, string,))
-            t.start()
+            t = Thread(target=self.runChildThread, args=(term, i, string,)).start()
             sleep(0.01)
 
     def runChildThread(self, term, order, output):
         print 'Starting batch', order
         url = 'https://www.google.com/search?tbm=isch&q='+term+'&ijn='+str(order)+'&start='+str(order)+'00&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
-        print url
         req = Request(url, headers={'User-Agent' : 'Dab on them Haters Browser'})
         con = urlopen(req)
         htmlFile = con.read()
@@ -59,9 +55,5 @@ if __name__ == '__main__':
     parser.add_argument('-b','--batchsize', help='Number of images to fetch for every term (default: 100)', required=False, type=int)
     parser.add_argument('-o', '--output', help='Folder to output to (default: output)', required=False, type=str)
     args = parser.parse_args()
-    batchsize = args.batchsize if args.batchsize != None else 100
-    inputTerms = args.input
-    outputLocation = args.output if args.output != None else ''
-    print batchsize, inputTerms, outputLocation
-    a = Fetch(inputTerms, batchsize, outputLocation)
+    a = Fetch(args.input, args.batchsize, args.output)
     a.runMainThread()
