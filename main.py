@@ -36,18 +36,34 @@ class Fetch():
                     with open(string+'/'+str(k)+'.jpeg', 'wb+') as image:
                         print matches[k-j*100]
                         image.write(urllib2.urlopen(matches[k-(j*100)]).read())
-            
-    def runThread(self, term, order, output):
-        print term, order, output
+
+    def runMainThread(self):
+        for j in self.terms:
+            t = threading.Thread(target=self.runParentThread, args=(j,))
+            t.start()
+            time.sleep(0.01)
+    
+    def runParentThread(self, term):
+        string = self.outputLocation+term
+        if not os.path.isdir(string):
+            os.makedirs(string)
+        for i in range(self.batchSize//100):
+            print i
+            t = threading.Thread(target=self.runChildThread, args=(term, i, string,))
+            t.start()
+            time.sleep(0.01)
+
+    def runChildThread(self, term, order, output):
         print 'Starting batch', order
         url = 'https://www.google.com/search?tbm=isch&q='+term+'&ijn='+str(order)+'&start='+str(order)+'00&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc'
+        print url
         req = urllib2.Request(url, headers={'User-Agent' : 'Magic Browser'})
         con = urllib2.urlopen(req)
         htmlFile = con.read()
         matches = re.findall(self.RE_IMG_SRC, htmlFile)
         for k in range(order*100, order*100+len(matches)):
-            if (k-order*100)%20 == 0:
-                print 'Batch', order, 'at', str(k)+'%'
+            if k%20 == 0:
+                print 'Batch', order, 'at', str(k-order*100)+'%'
             with open(output+'/'+str(k)+'.jpeg', 'wb+') as image:
                 image.write(urllib2.urlopen(matches[k-order*100]).read())
         print 'Finished batch', order
@@ -63,13 +79,4 @@ if __name__ == '__main__':
     outputLocation = args.output if args.output != None else ''
     print batchsize, inputTerms, outputLocation
     a = Fetch(inputTerms, batchsize, outputLocation)
-    #a.run()
-    for j in inputTerms:
-        string = outputLocation+j
-        if not os.path.isdir(string):
-            os.makedirs(string)
-        for i in range(batchsize//100):
-            print i
-            t = threading.Thread(target=a.runThread, args=(j, i, string,))
-            t.start()
-            time.sleep(0.01)
+    a.runMainThread()
